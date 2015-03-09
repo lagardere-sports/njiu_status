@@ -1,4 +1,4 @@
-Copyright (c) 2015 Raik Osiablo
+Copyright (c) Njiuko GmbH
 
 MIT License
 

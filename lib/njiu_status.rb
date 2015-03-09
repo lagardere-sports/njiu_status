@@ -1,5 +1,2 @@
 require "njiu_status/version"
-
-module NjiuStatus
-  # Your code goes here...
-end
+require "njiu_status/rack_app"
