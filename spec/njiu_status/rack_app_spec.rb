@@ -3,7 +3,10 @@ require "spec_helper"
 RSpec.describe NjiuStatus::RackApp do
   let(:app) { NjiuStatus::RackApp }
   let(:check) { NjiuStatus::Check }
+  let(:config) { NjiuStatus::Configuration }
   let(:response) { last_response }
+
+  before { config.token = nil }
 
   shared_examples "an unknown check" do
     it "returns 404" do
@@ -66,6 +69,48 @@ RSpec.describe NjiuStatus::RackApp do
       end
 
       it_behaves_like "a successful check"
+    end
+  end
+
+  describe "token check" do
+    before do
+      check.add name: "foo", handler: -> (_,_) {}
+    end
+
+    context "success" do
+      it "returns 200" do
+        config.token = "foo123"
+        get "/foo?token=foo123"
+      end
+    end
+
+    shared_examples "an invalid token" do
+      it "returns 401" do
+        expect(response.status).to eq(401)
+      end
+
+      it "renders error" do
+        expect(response.body).to include("error")
+        expect(response.body).to include("token invalid or missing")
+      end
+    end
+
+    context "mismatch" do
+      before do
+        config.token = "foo123"
+        get "/foo?token=foo123123"
+      end
+
+      it_behaves_like "an invalid token"
+    end
+
+    context "missing" do
+      before do
+        config.token = "foo123"
+        get "/foo"
+      end
+
+      it_behaves_like "an invalid token"
     end
   end
 end

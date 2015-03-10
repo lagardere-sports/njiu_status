@@ -7,5 +7,9 @@ module NjiuStatus
     def self.add(name:, handler:, options: {})
       all["/#{name}"] = handler
     end
+
+    def self.clear
+      @checks = {}
+    end
   end
 end
