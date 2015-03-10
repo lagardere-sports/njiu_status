@@ -31,22 +31,41 @@ RSpec.describe NjiuStatus::RackApp do
     it_behaves_like "an unknown check"
   end
 
-  describe "successful check" do
-    let(:handler) do
-      ->(request, response) { response.write("OK"); response.status = 200 }
-    end
-
-    before do
-      check.add name: "foo", handler: handler
-      get "/foo"
-    end
-
+  shared_examples "a successful check" do
     it "returns 200" do
       expect(response.status).to eq(200)
     end
 
     it "renders content" do
-      expect(response.body).to eq("OK")
+      expect(response.body).to eq(body)
+    end
+  end
+
+  describe "successful check" do
+    let(:handler) do
+      ->(request, response) { response.write(body); response.status = 200 }
+    end
+
+    describe "top-level" do
+      let(:body) { "FOO" }
+
+      before do
+        check.add name: "foo", handler: handler
+        get "/foo"
+      end
+
+      it_behaves_like "a successful check"
+    end
+
+    describe "nested" do
+      let(:body) { "NESTED" }
+
+      before do
+        check.add name: "foo/nested", handler: handler
+        get "/foo/nested"
+      end
+
+      it_behaves_like "a successful check"
     end
   end
 end
