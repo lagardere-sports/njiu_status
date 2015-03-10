@@ -25,13 +25,18 @@ NjiuStatus.configure do |config|
 end
 
 NjiuStatus.add_check name: "users", handler: -> (request, response) do
-  response.write({users: User.count}.to_json)
-  response.status = 200
+  begin
+    response.write({users: User.first.name}.to_json)
+    response.status = 200
+  rescue NoMethodError
+    response.write({error: "No users in database."}.to_json)
+    response.status = 500
+  end
 end
 
 NjiuStatus.add_check name: "posts", handler: -> (request, response) do
   if Post.failed.any?
-    response.write({error: "There a failed posts!"}.to_json)
+    response.write({error: "There a failed posts."}.to_json)
     response.status = 418
   else
     response.status = 200
@@ -55,4 +60,6 @@ curl -I -H"Authorization: Token foobar123" http://localhost:3000/status/users
 curl -I http://localhost:3000/status/users?token=foobar123
 ```
 
-Within a check each handler has access to the current [request](http://www.rubydoc.info/gems/rack/Rack/Request) and should set the body and status in the [response](http://www.rubydoc.info/gems/rack/Rack/Response). The gem itself provides no global error handling, each check is responsible to rescue possible exceptions and always return a valid response.
+Within a check each handler has access to the current [request](http://www.rubydoc.info/gems/rack/Rack/Request) and should set the body and status in the [response](http://www.rubydoc.info/gems/rack/Rack/Response).
+
+The gem provides basic error handling if an exception is raised within the handler. Nevertheless: each check should rescue possible exceptions itself and always return a valid response.

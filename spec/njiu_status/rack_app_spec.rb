@@ -134,4 +134,23 @@ RSpec.describe NjiuStatus::RackApp do
       it_behaves_like "an invalid token"
     end
   end
+
+  describe "error handling" do
+    let(:handler) { -> (_,_) { nil.foo } }
+
+    before do
+      check.add name: "foo", handler: handler
+      get "/foo"
+    end
+
+    it "returns 500" do
+      expect(response.status).to eq(500)
+    end
+
+    it "renders exception" do
+      expect(response.body).to include("error")
+      expect(response.body).to include("NoMethodError")
+      expect(response.body).to include("undefined method `foo' for nil:NilClass")
+    end
+  end
 end

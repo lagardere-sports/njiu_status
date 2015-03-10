@@ -15,7 +15,12 @@ module NjiuStatus
         action = File.path(request.path_info).chomp(format)
         check = Check.all[action]
         if check
-          check.call(request, response)
+          begin
+            check.call(request, response)
+          rescue => e
+            response.write({error: "#{e.class}: #{e.message}"}.to_json)
+            response.status = 500
+          end
         else
           response.write({error: "unknown check: '#{action}'"}.to_json)
           response.status = 404
