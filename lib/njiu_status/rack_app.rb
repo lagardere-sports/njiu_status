@@ -6,7 +6,8 @@ module NjiuStatus
       request = Rack::Request.new env
       response = Rack::Response.new
 
-      if !Configuration.token.nil? && Configuration.token != request.params["token"]
+      token = request.params["token"] || (env["HTTP_AUTHORIZATION"] && env["HTTP_AUTHORIZATION"].split(":").last.strip)
+      if !Configuration.token.nil? && Configuration.token != token
         response.write({error: "token invalid or missing"}.to_json)
         response.status = 401
       else
