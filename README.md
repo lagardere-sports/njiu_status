@@ -63,3 +63,25 @@ curl -I http://localhost:3000/status/users?token=foobar123
 Within a check each handler has access to the current [request](http://www.rubydoc.info/gems/rack/Rack/Request) and should set the body and status in the [response](http://www.rubydoc.info/gems/rack/Rack/Response).
 
 The gem provides basic error handling if an exception is raised within the handler. Nevertheless: each check should rescue possible exceptions itself and always return a valid response.
+
+
+## Development & Testing
+
+Install all necessary dependencies:
+
+```ruby
+bundle
+appraisal install
+```
+
+Run specs without integration tests:
+
+```ruby
+rspec
+```
+
+Run specs with integrations tests for Rails 3 and Rails 4:
+
+```ruby
+appraisal rspec
+```
