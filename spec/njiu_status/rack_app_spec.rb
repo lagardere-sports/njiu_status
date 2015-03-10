@@ -99,7 +99,7 @@ RSpec.describe NjiuStatus::RackApp do
     context "via header" do
       it "returns 200" do
         config.token = "foo123"
-        header "Authorization", "Token: foo123"
+        header "Authorization", "Token foo123"
         get "/foo"
         expect(response.status).to eq(200)
       end
