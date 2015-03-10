@@ -50,7 +50,7 @@ RSpec.describe NjiuStatus::RackApp do
     end
 
     describe "top-level" do
-      let(:body) { "FOO" }
+      let(:body) { "Foo" }
 
       before do
         check.add name: "foo", handler: handler
@@ -61,11 +61,22 @@ RSpec.describe NjiuStatus::RackApp do
     end
 
     describe "nested" do
-      let(:body) { "NESTED" }
+      let(:body) { "Nested" }
 
       before do
         check.add name: "foo/nested", handler: handler
         get "/foo/nested"
+      end
+
+      it_behaves_like "a successful check"
+    end
+
+    describe "with explicit format" do
+      let(:body) { "Foo" }
+
+      before do
+        check.add name: "foo", handler: handler
+        get "foo.json?bar=baz"
       end
 
       it_behaves_like "a successful check"

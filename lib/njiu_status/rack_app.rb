@@ -10,11 +10,13 @@ module NjiuStatus
         response.write({error: "token invalid or missing"}.to_json)
         response.status = 401
       else
-        check = Check.all[request.path_info]
+        format = File.extname(request.path_info)
+        action = File.path(request.path_info).chomp(format)
+        check = Check.all[action]
         if check
           check.call(request, response)
         else
-          response.write({error: "unknown check: '#{request.path_info}'"}.to_json)
+          response.write({error: "unknown check: '#{action}'"}.to_json)
           response.status = 404
         end
       end
