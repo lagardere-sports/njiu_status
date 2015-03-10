@@ -17,17 +17,21 @@ Mount the Rack application in your routes file.
 mount NjiuStatus::RackApp, at: "status"
 ```
 
-Define endpoints (checks) that should be available under the mount point. Preferred location is an initializer.
+Define endpoints (checks) that should be available under the mount point and restrict access to them by setting a token.
 
 ```ruby
-NjiuStatus::Check.add name: "users", handler: -> (request, response) do
-  response.write "{users: #{User.count}}"
+NjiuStatus.configure do |config|
+  config.token = "foobar123"
+end
+
+NjiuStatus.add_check name: "users", handler: -> (request, response) do
+  response.write({users: User.count}.to_json)
   response.status = 200
 end
 
-NjiuStatus::Check.add name: "posts", handler: -> (request, response) do
+NjiuStatus.add_check name: "posts", handler: -> (request, response) do
   if Post.failed.any?
-    response.write "Error: failed posts"
+    response.write({error: "There a failed posts!"}.to_json)
     response.status = 418
   else
     response.status = 200
