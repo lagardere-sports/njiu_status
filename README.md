@@ -42,6 +42,17 @@ NjiuStatus.add_check name: "posts", handler: -> (request, response) do
     response.status = 200
   end
 end
+
+# example for usage with nagios plugin 'check_json.rb'
+NjiuStatus.add_check name: "nagios", handler: -> (request, response) do
+  if SystemCheck.ok?
+    response.write({message: "Everything went better than expected :)", exit_code: NjiuStatus::EXIT_OK}.to_json)
+  elsif SystemCheck.failed?
+    response.write({message: "Something went terribly wrong.", exit_code: NjiuStatus::EXIT_CRITICAL}.to_json)
+  elsif SystemCheck.high_load?
+    response.write({message: "It's gettin' hot in here.", exit_code: NjiuStatus::EXIT_WARNING}.to_json)
+  end
+end
 ```
 
 ## Usage
@@ -50,6 +61,7 @@ The example above generates the following routes:
 ```
 /status/users
 /status/posts
+/status/nagios
 ```
 
 If a token was configured it has to be supplied in every call either via a HTTP header (preferred) or as a query param.

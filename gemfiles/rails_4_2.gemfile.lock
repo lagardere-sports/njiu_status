@@ -1,7 +1,7 @@
 PATH
   remote: ../
   specs:
-    njiu_status (0.0.1)
+    njiu_status (0.0.2)
       rack
 
 GEM

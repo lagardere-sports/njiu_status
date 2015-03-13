@@ -1,4 +1,5 @@
 require "njiu_status/version"
+require "njiu_status/constants"
 require "njiu_status/configuration"
 require "njiu_status/check"
 require "njiu_status/rack_app"
